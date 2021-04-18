@@ -27,6 +27,6 @@ class LoadRatesPresenter(): MvpPresenter<LoadRatesView>() {
     }
 
     companion object {
-        private const val UPDATE_INTERVAL = 10L
+        private const val UPDATE_INTERVAL = 5L
     }
 }
