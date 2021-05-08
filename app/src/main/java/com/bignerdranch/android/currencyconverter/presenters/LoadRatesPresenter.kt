@@ -15,15 +15,15 @@ class LoadRatesPresenter(): MvpPresenter<LoadRatesView>() {
 
     fun loadData(){
         api.loadRates()
-                .subscribeOn(io())
-                .repeatWhen { completed -> completed.delay(UPDATE_INTERVAL, TimeUnit.SECONDS) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ result ->
-                    viewState.updateData(result)
-                }, { error ->
-                    error.printStackTrace()
-                    viewState.noInternetConnectionException()
-                })
+            .subscribeOn(io())
+            .repeatWhen { completed -> completed.delay(UPDATE_INTERVAL, TimeUnit.SECONDS) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ result ->
+                viewState.updateData(result)
+            }, { error ->
+                error.printStackTrace()
+                viewState.noInternetConnectionException()
+            })
     }
 
     companion object {
