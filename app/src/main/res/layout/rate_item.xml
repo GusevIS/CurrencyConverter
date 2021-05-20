@@ -6,19 +6,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/rate_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/rate_image"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
+
     <TextView
         android:id="@+id/text_rate_short_name_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/rate_image"/>
 
     <TextView
         android:id="@+id/text_rate_full_name_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_below="@id/text_rate_short_name_item"/>
+        android:layout_below="@id/text_rate_short_name_item"
+        android:layout_toEndOf="@id/rate_image"
+        android:layout_marginStart="5dp"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"

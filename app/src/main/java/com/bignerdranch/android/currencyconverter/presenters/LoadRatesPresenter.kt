@@ -1,32 +1,42 @@
 package com.bignerdranch.android.currencyconverter.presenters
 
-import com.bignerdranch.android.currencyconverter.api.CoingeckoApi
+import android.content.Context
+import com.bignerdranch.android.currencyconverter.data.repository.RatesRepositoryImpl
 import com.bignerdranch.android.currencyconverter.views.LoadRatesView
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers.io
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 @InjectViewState
-class LoadRatesPresenter(): MvpPresenter<LoadRatesView>() {
-    private var api: CoingeckoApi = CoingeckoApi.create()
+class LoadRatesPresenter(context: Context) : MvpPresenter<LoadRatesView>() {
+    private val repository: RatesRepositoryImpl = RatesRepositoryImpl(context)
+    private var loadingScope = CoroutineScope(Dispatchers.Main)
 
-    fun loadData(){
-        api.loadRates()
-            .subscribeOn(io())
-            .repeatWhen { completed -> completed.delay(UPDATE_INTERVAL, TimeUnit.SECONDS) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ result ->
-                viewState.updateData(result)
-            }, { error ->
-                error.printStackTrace()
-                viewState.noInternetConnectionException()
-            })
+    fun loadData() {
+        loadingScope.launch {
+            var rates = repository.getRatesFromCache()
+            if (rates.isNotEmpty()) {
+                viewState.updateData(rates)
+            }
+
+            while(true) {
+                rates = repository.getRates()
+                if (rates.isEmpty()) {
+                    viewState.noInternetConnectionException()
+                    break
+                } else {
+                    viewState.updateData(rates)
+                }
+                delay(UPDATE_INTERVAL)
+            }
+        }
+    }
+
+    fun cancelLoading() {
+        this.loadingScope.coroutineContext.cancelChildren()
     }
 
     companion object {
-        private const val UPDATE_INTERVAL = 5L
+        private const val UPDATE_INTERVAL = 5000L
     }
 }
